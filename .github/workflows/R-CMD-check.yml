@@ -30,32 +30,44 @@ jobs:
 
       - name: Build debian-clang image
         run: |
+          echo "FROM pachadotdev/debian-clang:latest" > Dockerfile
           docker build -t pachadotdev/debian-clang:latest .
+          docker build -t debian_clang .
+          rm Dockerfile
 
       - name: Build debian-gcc image
         run: |
+          echo "FROM pachadotdev/debian-gcc:latest" > Dockerfile
           docker build -t pachadotdev/debian-gcc:latest .
+          docker build -t debian_gcc .
+          rm Dockerfile
 
       - name: Build fedora-clang image
         run: |
+          echo "FROM pachadotdev/fedora-clang:latest" > Dockerfile
           docker build -t pachadotdev/fedora-clang:latest .
+          docker build -t fedora_clang .
+          rm Dockerfile
 
       - name: Build fedora-gcc image
         run: |
+          echo "FROM pachadotdev/fedora-gcc:latest" > Dockerfile
           docker build -t pachadotdev/fedora-gcc:latest .
-          
-      - name: Run on Debian 12 with Clang
+          docker build -t fedora_gcc .
+          rm Dockerfile
+
+      - name: Check package on Debian 12 with Clang
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/debian-clang:latest bash -c "Rscript -e 'devtools::check()'"
 
-      - name: Run on Debian 12 with GCC
+      - name: Check package on Debian 12 with GCC
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/debian-gcc:latest bash -c "Rscript -e 'devtools::check()'"
 
-      - name: Run on Fedora 40 with Clang
+      - name: Check package on Fedora 40 with Clang
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/fedora-clang:latest bash -c "Rscript -e 'devtools::check()'"
 
-      - name: Run on Fedora 40 with GCC
+      - name: Check package on Fedora 40 with GCC
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/fedora-gcc:latest bash -c "Rscript -e 'devtools::check()'"
