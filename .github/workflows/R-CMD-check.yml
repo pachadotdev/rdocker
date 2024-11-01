@@ -1,0 +1,60 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+  pull_request:
+
+name: R-CMD-check
+
+permissions: read-all
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.name }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - name: Setup R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+
+      - name: Run on Debian 12 with Clang
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/debian-clang:latest bash -c "Rscript -e 'devtools::check()'"
+
+      - name: Run on Debian 12 with GCC
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/debian-gcc:latest bash -c "Rscript -e 'devtools::check()'"
+
+      - name: Run on Fedora 40 with Clang
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/fedora-clang:latest bash -c "Rscript -e 'devtools::check()'"
+
+      - name: Run on Fedora 40 with GCC
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/fedora-gcc:latest bash -c "Rscript -e 'devtools::check()'"

@@ -1,0 +1,8 @@
+^debian-clang$
+^debian-gcc$
+^fedora-clang$
+^fedora-gcc$
+^README\.md$
+^LICENSE\.md$
+^\.github$
+^\.vscode$
