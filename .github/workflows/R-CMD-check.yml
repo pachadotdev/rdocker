@@ -28,13 +28,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker images
+      - name: Build debian-clang image
         run: |
           docker build -t pachadotdev/debian-clang:latest .
-          docker build -t pachadotdev/debian-gcc:latest .
-          docker build -t pachadotdev/fedora-clang:latest .
-          docker build -t pachadotdev/fedora-gcc:latest .
 
+      - name: Build debian-gcc image
+        run: |
+          docker build -t pachadotdev/debian-gcc:latest .
+
+      - name: Build fedora-clang image
+        run: |
+          docker build -t pachadotdev/fedora-clang:latest .
+
+      - name: Build fedora-gcc image
+        run: |
+          docker build -t pachadotdev/fedora-gcc:latest .
+          
       - name: Run on Debian 12 with Clang
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace pachadotdev/debian-clang:latest bash -c "Rscript -e 'devtools::check()'"
